@@ -1,6 +1,7 @@
 package net.digitalingot.feather.serverapi.bukkit.player;
 
 import net.digitalingot.feather.serverapi.api.FeatherAPI;
+import net.digitalingot.feather.serverapi.bukkit.event.player.BukkitPlayerPressedKeybind;
 import net.digitalingot.feather.serverapi.bukkit.ui.BukkitUIPage;
 import net.digitalingot.feather.serverapi.bukkit.ui.BukkitUIService;
 import net.digitalingot.feather.serverapi.bukkit.ui.rpc.RpcService;
@@ -8,6 +9,7 @@ import net.digitalingot.feather.serverapi.messaging.ServerMessageHandler;
 import net.digitalingot.feather.serverapi.messaging.messages.server.C2SFUILoadError;
 import net.digitalingot.feather.serverapi.messaging.messages.server.C2SFUIRequest;
 import net.digitalingot.feather.serverapi.messaging.messages.server.C2SFUIStateChange;
+import net.digitalingot.feather.serverapi.messaging.messages.server.C2SKeybindPressed;
 
 class PlayerMessageHandler implements ServerMessageHandler {
 
@@ -72,4 +74,10 @@ class PlayerMessageHandler implements ServerMessageHandler {
       page.onLoadError(this.player, loadError.getErrorText());
     }
   }
+
+  @Override
+  public void handle(C2SKeybindPressed keybindPressed) {
+    this.player.callEvent(new BukkitPlayerPressedKeybind(this.player, keybindPressed.getKeycode()));
+  }
+
 }

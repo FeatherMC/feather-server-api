@@ -28,6 +28,7 @@ import net.digitalingot.feather.serverapi.messaging.messages.server.C2SClientHel
 import net.digitalingot.feather.serverapi.messaging.messages.server.C2SHandshake;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -83,6 +84,10 @@ public class BukkitMessagingService implements Listener {
     }
   }
 
+  public void callEvent(Event event) {
+    this.plugin.getServer().getPluginManager().callEvent(event);
+  }
+
   private void handleHello(Player player, C2SClientHello hello) {
     BukkitFeatherPlayer featherPlayer =
         new BukkitFeatherPlayer(player, this, this.rpcService);
@@ -111,7 +116,7 @@ public class BukkitMessagingService implements Listener {
                 .map(domain -> new FeatherMod(domain.getName()))
                 .collect(Collectors.toList()));
 
-    this.plugin.getServer().getPluginManager().callEvent(helloEvent);
+    this.callEvent(helloEvent);
   }
 
   private void handleMessage(BukkitFeatherPlayer player, Message<ServerMessageHandler> message) {

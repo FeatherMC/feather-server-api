@@ -7,8 +7,10 @@ import net.digitalingot.feather.serverapi.api.event.EventService;
 import net.digitalingot.feather.serverapi.api.event.EventSubscription;
 import net.digitalingot.feather.serverapi.api.event.FeatherEvent;
 import net.digitalingot.feather.serverapi.api.event.player.PlayerHelloEvent;
+import net.digitalingot.feather.serverapi.api.event.player.PlayerPressedKeybindEvent;
 import net.digitalingot.feather.serverapi.bukkit.FeatherBukkitPlugin;
 import net.digitalingot.feather.serverapi.bukkit.event.player.BukkitPlayerHelloEvent;
+import net.digitalingot.feather.serverapi.bukkit.event.player.BukkitPlayerPressedKeybind;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventPriority;
 import org.bukkit.plugin.Plugin;
@@ -21,6 +23,7 @@ public class BukkitEventService implements EventService {
       MAPPING =
           ImmutableMap.<Class<? extends FeatherEvent>, Class<? extends BukkitFeatherEvent>>builder()
               .put(PlayerHelloEvent.class, BukkitPlayerHelloEvent.class)
+              .put(PlayerPressedKeybindEvent.class, BukkitPlayerPressedKeybind.class)
               .build();
 
   private final FeatherBukkitPlugin plugin;

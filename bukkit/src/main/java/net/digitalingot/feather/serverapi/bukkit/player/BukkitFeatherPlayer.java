@@ -9,6 +9,7 @@ import net.digitalingot.feather.serverapi.bukkit.ui.rpc.RpcService;
 import net.digitalingot.feather.serverapi.messaging.Message;
 import net.digitalingot.feather.serverapi.messaging.ServerMessageHandler;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 
 public class BukkitFeatherPlayer implements FeatherPlayer {
@@ -46,4 +47,8 @@ public class BukkitFeatherPlayer implements FeatherPlayer {
   public void handleMessage(@NotNull Message<ServerMessageHandler> message) {
     message.handle(this.messageHandler);
   }
+  public void callEvent(Event event) {
+    messagingService.callEvent(event);
+  }
+
 }
