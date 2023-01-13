@@ -10,4 +10,5 @@ public interface FeatherPlayer {
 
   @NotNull
   String getName();
+
 }

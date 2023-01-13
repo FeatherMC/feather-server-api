@@ -7,6 +7,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.digitalingot.feather.serverapi.api.FeatherAPI;
 import net.digitalingot.feather.serverapi.api.event.player.PlayerHelloEvent;
+import net.digitalingot.feather.serverapi.api.event.player.PlayerPressedKeybindEvent;
 import net.digitalingot.feather.serverapi.api.model.FeatherMod;
 import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
 import net.digitalingot.feather.serverapi.api.ui.UIPage;
@@ -32,6 +33,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ExamplePlugin extends JavaPlugin implements Listener {
+
+    public static final String PLUGIN_SLUG = "examplePlugin";
   private static final String DEMO_HTML_RESOURCE = "demo.min.html";
   private static final Gson GSON = new Gson();
   private static final int MAX_SCORES = 10;
@@ -54,6 +57,7 @@ public class ExamplePlugin extends JavaPlugin implements Listener {
     this.page = createPage(demoUrl);
 
     subscribeToFeatherHello();
+    subscribeToFeatherKeyInput();
 
     setupCommands();
   }
@@ -123,6 +127,9 @@ public class ExamplePlugin extends JavaPlugin implements Listener {
             event -> {
               getLogger().info("Got hello from " + event.getPlayer().getName());
               getLogger().info("Platform: " + event.getPlatform());
+
+              initializeKeybinds(event.getPlayer());
+
               getLogger()
                   .info(
                       "Platform Mods ("
@@ -143,6 +150,21 @@ public class ExamplePlugin extends JavaPlugin implements Listener {
               FeatherAPI.getUIService().createPageForPlayer(event.getPlayer(), this.page);
             });
   }
+
+    private void initializeKeybinds(FeatherPlayer player) {
+        FeatherAPI.getKeybindService().registerKeybind(PLUGIN_SLUG, player, 88);
+        getLogger().info("Initialized keybinds for: " + player.getName());
+    }
+
+    private void subscribeToFeatherKeyInput() {
+        FeatherAPI.getEventService()
+                .subscribe(
+                        PlayerPressedKeybindEvent.class,
+                        event -> {
+                            getLogger().info("Key pressed by: " + event.getPlayer().getName());
+                            getLogger().info("Keycode is: " + event.getKeycode());
+                        });
+    }
 
   @SuppressWarnings("deprecation")
   private void setupCommands() {
