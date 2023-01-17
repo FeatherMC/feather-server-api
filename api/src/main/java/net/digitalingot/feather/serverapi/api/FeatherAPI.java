@@ -1,6 +1,7 @@
 package net.digitalingot.feather.serverapi.api;
 
 import net.digitalingot.feather.serverapi.api.event.EventService;
+import net.digitalingot.feather.serverapi.api.mod.FeatherModService;
 import net.digitalingot.feather.serverapi.api.player.PlayerService;
 import net.digitalingot.feather.serverapi.api.ui.UIService;
 import net.digitalingot.feather.serverapi.api.waypoint.WaypointService;
@@ -58,5 +59,13 @@ public final class FeatherAPI {
   @NotNull
   public static WaypointService getWaypointService() {
     return featherService.getWaypointService();
+  }
+
+  /**
+   * @see FeatherService#getFeatherModService() ()
+   */
+  @NotNull
+  public static FeatherModService getFeatherModService() {
+    return featherService.getFeatherModService();
   }
 }

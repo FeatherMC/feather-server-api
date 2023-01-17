@@ -1,10 +1,6 @@
 package net.digitalingot.feather.serverapi.messaging;
 
-import net.digitalingot.feather.serverapi.messaging.messages.client.S2CCreateFUI;
-import net.digitalingot.feather.serverapi.messaging.messages.client.S2CDestroyFUI;
-import net.digitalingot.feather.serverapi.messaging.messages.client.S2CFUIMessage;
-import net.digitalingot.feather.serverapi.messaging.messages.client.S2CFUIResponse;
-import net.digitalingot.feather.serverapi.messaging.messages.client.S2CSetFUIState;
+import net.digitalingot.feather.serverapi.messaging.messages.client.*;
 
 public interface ClientMessageHandler extends MessageHandler {
   void handle(S2CCreateFUI createFUI);
@@ -16,4 +12,8 @@ public interface ClientMessageHandler extends MessageHandler {
   void handle(S2CFUIMessage message);
 
   void handle(S2CFUIResponse response);
+
+  void handle(S2CPluginModDisable modDisable);
+
+  void handle(S2CPluginModReEnable modReEnable);
 }
