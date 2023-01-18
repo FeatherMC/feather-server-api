@@ -26,10 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ExamplePlugin extends JavaPlugin implements Listener {
@@ -146,6 +143,9 @@ public class ExamplePlugin extends JavaPlugin implements Listener {
                           + event.getFeatherMods().stream()
                               .map(FeatherMod::getName)
                               .collect(Collectors.joining(", ")));
+
+              //Disable perspective mod on player join
+              FeatherAPI.getFeatherModService().disableMods(event.getPlayer(), Arrays.asList(new FeatherMod("perspective")));
 
               FeatherAPI.getUIService().createPageForPlayer(event.getPlayer(), this.page);
             });

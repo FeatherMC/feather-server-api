@@ -16,4 +16,8 @@ public interface ClientMessageHandler extends MessageHandler {
   void handle(S2CKeybindCapture captureKeybind);
 
   void handle(S2CKeybindRelease releaseKeybind);
+  
+  void handle(S2CPluginModDisable modDisable);
+
+  void handle(S2CPluginModReEnable modReEnable);
 }

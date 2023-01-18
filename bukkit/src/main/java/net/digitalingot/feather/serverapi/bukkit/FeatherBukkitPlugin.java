@@ -4,6 +4,7 @@ import net.digitalingot.feather.serverapi.api.FeatherAPI;
 import net.digitalingot.feather.serverapi.bukkit.event.BukkitEventService;
 import net.digitalingot.feather.serverapi.bukkit.keybind.BukkitKeybindService;
 import net.digitalingot.feather.serverapi.bukkit.messaging.BukkitMessagingService;
+import net.digitalingot.feather.serverapi.bukkit.mod.BukkitFeatherModService;
 import net.digitalingot.feather.serverapi.bukkit.player.BukkitPlayerService;
 import net.digitalingot.feather.serverapi.bukkit.ui.BukkitUIService;
 import net.digitalingot.feather.serverapi.bukkit.ui.rpc.RpcService;
@@ -26,8 +27,11 @@ public class FeatherBukkitPlugin extends JavaPlugin {
         new BukkitMessagingService(this, playerService, rpcService);
     BukkitUIService uiService = new BukkitUIService(messagingService, rpcService);
 
+    BukkitFeatherModService featherModService = new BukkitFeatherModService(messagingService);
+
     BukkitFeatherService bukkitFeatherService =
-        new BukkitFeatherService(eventService, playerService, uiService, keybindService);
+        new BukkitFeatherService(eventService, playerService, uiService, keybindService, featherModService);
+    
     FeatherAPI.register(bukkitFeatherService);
 
     super.onEnable();
