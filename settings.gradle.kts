@@ -8,7 +8,7 @@ include(
     "messaging",
     "bukkit",
     //"bungee",
-    //"velocity",
+    "velocity",
     "examples:shop",
     "examples:shop-html",
 )

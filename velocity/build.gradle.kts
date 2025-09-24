@@ -1,5 +1,12 @@
 plugins {
     id("feather-server-api.java-conventions")
+    id("com.github.johnrengelman.shadow") version "7.1.2"
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
 }
 
 repositories {
@@ -10,6 +17,9 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.velocitypowered:velocity-api:1.1.5")
-    annotationProcessor("com.velocitypowered:velocity-api:1.1.5")
+    compileOnly("com.velocitypowered:velocity-api:3.1.1")
+    annotationProcessor("com.velocitypowered:velocity-api:3.1.1")
+    implementation(project(":api"))
+    implementation(project(":common"))
+    implementation(project(":messaging"))
 }
