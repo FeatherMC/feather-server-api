@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import net.digitalingot.feather.serverapi.api.FeatherAPI;
 import net.digitalingot.feather.serverapi.api.meta.ServerListBackground;
@@ -47,7 +48,7 @@ class PlayerMessageHandler implements ServerMessageHandler {
               })
           .build();
 
-  private int requestId = 0;
+  private final AtomicInteger requestId = new AtomicInteger();
 
   public PlayerMessageHandler(BukkitFeatherPlayer player, RpcService rpcService) {
     this.player = player;
@@ -135,7 +136,7 @@ class PlayerMessageHandler implements ServerMessageHandler {
   }
 
   public @NotNull CompletableFuture<@NotNull Collection<@NotNull FeatherMod>> requestEnabledMods() {
-    int id = this.requestId++;
+    int id = this.requestId.getAndIncrement();
     CompletableFuture<@NotNull Collection<@NotNull FeatherMod>> future = new CompletableFuture<>();
     //noinspection UnstableApiUsage
     this.pendingModsRequests.put(id, future);

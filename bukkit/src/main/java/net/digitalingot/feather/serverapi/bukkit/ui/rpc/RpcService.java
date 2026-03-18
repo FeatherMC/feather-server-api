@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import net.digitalingot.feather.serverapi.api.ui.rpc.RpcController;
 import net.digitalingot.feather.serverapi.api.ui.rpc.RpcHandler;
@@ -25,14 +26,12 @@ import org.jetbrains.annotations.Nullable;
 
 public class RpcService {
 
-  private final FeatherBukkitPlugin plugin;
   private final Logger logger;
   private final Map<String, RpcHost> rpcHosts;
 
   public RpcService(FeatherBukkitPlugin plugin) {
-    this.plugin = plugin;
     this.logger = plugin.getLogger();
-    this.rpcHosts = new HashMap<>();
+    this.rpcHosts = new ConcurrentHashMap<>();
     plugin.getServer().getPluginManager().registerEvents(new HandlerReaper(), plugin);
   }
 
@@ -121,8 +120,9 @@ public class RpcService {
     }
 
     if (rpcHost == null) {
-      rpcHost = new RpcHost();
-      this.rpcHosts.put(rpcHostName, rpcHost);
+      RpcHost newRpcHost = new RpcHost();
+      RpcHost previous = this.rpcHosts.putIfAbsent(rpcHostName, newRpcHost);
+      rpcHost = previous != null ? previous : newRpcHost;
     }
 
     rpcHost.registerAll(handlers);
@@ -147,7 +147,7 @@ public class RpcService {
       try {
         handler.invoke(
             new BukkitRpcRequest(player, body),
-            new BukkitRpcResponse(requestId, player, this.plugin));
+            new BukkitRpcResponse(requestId, player));
       } catch (Throwable throwable) {
         this.logger.warning("Error occurred handling RPC request");
         throwable.printStackTrace();
@@ -181,7 +181,7 @@ public class RpcService {
     private final Map<String, RegisteredRpcHandler> handlers;
 
     public RpcHost() {
-      this.handlers = new HashMap<>();
+      this.handlers = new ConcurrentHashMap<>();
     }
 
     public void registerAll(@NotNull Map<String, RegisteredRpcHandler> handlers) {
@@ -189,7 +189,12 @@ public class RpcService {
     }
 
     public void unregisterByController(@NotNull RpcController controller) {
-      this.handlers.values().removeIf(handler -> handler.getController() == controller);
+      for (Entry<String, RegisteredRpcHandler> entry : this.handlers.entrySet()) {
+        RegisteredRpcHandler handler = entry.getValue();
+        if (handler.getController() == controller) {
+          this.handlers.remove(entry.getKey(), handler);
+        }
+      }
     }
 
     public RegisteredRpcHandler getHandlerByName(@NotNull String name) {

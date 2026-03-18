@@ -1,10 +1,10 @@
 package net.digitalingot.feather.serverapi.bukkit.messaging;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import net.digitalingot.feather.serverapi.api.model.FeatherMod;
 import net.digitalingot.feather.serverapi.api.model.Platform;
@@ -135,10 +135,8 @@ public class BukkitMessagingService implements Listener {
       List<byte[]> fragments = MessageFragmenter.CLIENT_BOUND.fragment(message);
 
       for (FeatherPlayer recipient : recipients) {
-        for (byte[] data : fragments) {
-          sendPluginMessage(
-              ((BukkitFeatherPlayer) recipient).getPlayer(), CHANNEL_FRAGMENTED, data);
-        }
+        sendPluginMessages(
+            ((BukkitFeatherPlayer) recipient).getPlayer(), CHANNEL_FRAGMENTED, fragments);
       }
     } else {
       for (FeatherPlayer recipient : recipients) {
@@ -151,21 +149,32 @@ public class BukkitMessagingService implements Listener {
     byte[] encoded = MessageEncoder.CLIENT_BOUND.encode(message);
 
     if (encoded.length > Messenger.MAX_MESSAGE_SIZE) {
-      for (byte[] data : MessageFragmenter.CLIENT_BOUND.fragment(message)) {
-        sendPluginMessage(player, CHANNEL_FRAGMENTED, data);
-      }
+      sendPluginMessages(player, CHANNEL_FRAGMENTED, MessageFragmenter.CLIENT_BOUND.fragment(message));
     } else {
       sendPluginMessage(player, CHANNEL, encoded);
     }
   }
 
   private void sendPluginMessage(@NotNull Player player, @NotNull String channel, byte[] data) {
-    player.sendPluginMessage(this.plugin, channel, data);
+    sendPluginMessages(player, channel, java.util.Collections.singletonList(data));
+  }
+
+  private void sendPluginMessages(
+      @NotNull Player player, @NotNull String channel, @NotNull List<byte[]> dataMessages) {
+    this.plugin
+        .getPlayerTaskScheduler()
+        .execute(
+            player,
+            () -> {
+              for (byte[] data : dataMessages) {
+                player.sendPluginMessage(this.plugin, channel, data);
+              }
+            });
   }
 
   private static class Handshaking implements Listener {
     private final BukkitMessagingService messagingService;
-    private final Map<UUID, HandshakeState> handshakes = new HashMap<>();
+    private final Map<UUID, HandshakeState> handshakes = new ConcurrentHashMap<>();
     private final UpdateNotifier updateNotifier;
 
     public Handshaking(BukkitMessagingService messagingService, UpdateNotifier updateNotifier) {

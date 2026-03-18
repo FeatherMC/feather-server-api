@@ -2,9 +2,9 @@ package net.digitalingot.feather.serverapi.bukkit.player;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
 import net.digitalingot.feather.serverapi.api.player.PlayerService;
 import net.digitalingot.feather.serverapi.bukkit.FeatherBukkitPlugin;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class BukkitPlayerService implements PlayerService, Listener {
   private final PluginManager pluginManager;
-  private final Map<UUID, BukkitFeatherPlayer> players = new HashMap<>();
+  private final Map<UUID, BukkitFeatherPlayer> players = new ConcurrentHashMap<>();
 
   public BukkitPlayerService(FeatherBukkitPlugin plugin) {
     this.pluginManager = plugin.getServer().getPluginManager();

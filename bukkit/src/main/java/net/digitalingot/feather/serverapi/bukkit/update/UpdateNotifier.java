@@ -25,8 +25,8 @@ public class UpdateNotifier implements Listener {
           + "%d";
 
   private final FeatherBukkitPlugin plugin;
-  private boolean potentiallyOutOfDate = false;
-  private String outOfDateMessage;
+  private volatile boolean potentiallyOutOfDate = false;
+  private volatile String outOfDateMessage;
 
   public UpdateNotifier(FeatherBukkitPlugin plugin) {
     this.plugin = plugin;
@@ -47,16 +47,17 @@ public class UpdateNotifier implements Listener {
       Player joiningPlayer = event.getPlayer();
       if (joiningPlayer.hasPermission(NOTIFY_PERMISSION)) {
         final UUID joiningPlayerId = joiningPlayer.getUniqueId();
-        Bukkit.getScheduler()
-            .runTaskLater(
-                this.plugin,
+        this.plugin
+            .getPlayerTaskScheduler()
+            .executeLater(
+                joiningPlayer,
+                NOTIFICATION_DELAY_IN_TICKS,
                 () -> {
                   Player player = Bukkit.getPlayer(joiningPlayerId);
                   if (player != null) {
                     player.sendMessage(this.outOfDateMessage);
                   }
-                },
-                NOTIFICATION_DELAY_IN_TICKS);
+                });
       }
     }
   }
