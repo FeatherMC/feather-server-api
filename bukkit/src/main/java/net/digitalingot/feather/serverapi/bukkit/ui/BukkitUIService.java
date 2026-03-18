@@ -1,7 +1,7 @@
 package net.digitalingot.feather.serverapi.bukkit.ui;
 
-import com.google.common.collect.Maps;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
 import net.digitalingot.feather.serverapi.api.ui.UIPage;
 import net.digitalingot.feather.serverapi.api.ui.UIService;
@@ -23,7 +23,7 @@ public class BukkitUIService implements UIService {
   @NotNull private final BukkitMessagingService messagingService;
   @NotNull private final RpcService rpcService;
 
-  private final Map<String, BukkitUIPage> registeredPages = Maps.newHashMap();
+  private final Map<String, BukkitUIPage> registeredPages = new ConcurrentHashMap<>();
 
   public BukkitUIService(
       @NotNull BukkitMessagingService messagingService, @NotNull RpcService rpcService) {
@@ -42,11 +42,10 @@ public class BukkitUIService implements UIService {
   public UIPage registerPage(@NotNull Object pluginObject, @NotNull String url) {
     Plugin plugin = validatePlugin(pluginObject);
     String pluginName = plugin.getName();
-    if (this.registeredPages.containsKey(pluginName)) {
+    BukkitUIPage page = new BukkitUIPage(plugin, url);
+    if (this.registeredPages.putIfAbsent(pluginName, page) != null) {
       throw new IllegalArgumentException("Page already exists");
     }
-    BukkitUIPage page = new BukkitUIPage(plugin, url);
-    this.registeredPages.put(pluginName, page);
     return page;
   }
 

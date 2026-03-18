@@ -9,9 +9,12 @@ import net.digitalingot.feather.serverapi.bukkit.ui.BukkitUIService;
 import net.digitalingot.feather.serverapi.bukkit.ui.rpc.RpcService;
 import net.digitalingot.feather.serverapi.bukkit.update.UpdateNotifier;
 import net.digitalingot.feather.serverapi.bukkit.waypoint.BukkitWaypointService;
+import org.jetbrains.annotations.NotNull;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class FeatherBukkitPlugin extends JavaPlugin {
+  private PlayerTaskScheduler playerTaskScheduler;
+
   @Override
   public void onDisable() {
     super.onDisable();
@@ -19,6 +22,8 @@ public class FeatherBukkitPlugin extends JavaPlugin {
 
   @Override
   public void onEnable() {
+    this.playerTaskScheduler = new PlayerTaskScheduler(this);
+
     BukkitEventService eventService = new BukkitEventService(this);
     BukkitPlayerService playerService = new BukkitPlayerService(this);
 
@@ -36,5 +41,12 @@ public class FeatherBukkitPlugin extends JavaPlugin {
     FeatherAPI.register(bukkitFeatherService);
 
     super.onEnable();
+  }
+
+  public @NotNull PlayerTaskScheduler getPlayerTaskScheduler() {
+    if (this.playerTaskScheduler == null) {
+      throw new IllegalStateException("Player task scheduler not initialized");
+    }
+    return this.playerTaskScheduler;
   }
 }

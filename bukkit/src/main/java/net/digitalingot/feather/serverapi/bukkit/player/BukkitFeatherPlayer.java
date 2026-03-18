@@ -1,11 +1,12 @@
 package net.digitalingot.feather.serverapi.bukkit.player;
 
-import com.google.common.collect.Sets;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import net.digitalingot.feather.serverapi.api.model.FeatherMod;
 import net.digitalingot.feather.serverapi.api.player.FeatherPlayer;
@@ -24,7 +25,7 @@ public class BukkitFeatherPlayer implements FeatherPlayer {
   @NotNull private final Player player;
   @NotNull private final BukkitMessagingService messagingService;
   @NotNull private final PlayerMessageHandler messageHandler;
-  private final Set<FeatherMod> blockedMods = Sets.newHashSet();
+  private final Set<FeatherMod> blockedMods = ConcurrentHashMap.newKeySet();
 
   public BukkitFeatherPlayer(
       @NotNull Player player,
@@ -63,7 +64,8 @@ public class BukkitFeatherPlayer implements FeatherPlayer {
 
   @Override
   public CompletableFuture<@NotNull Collection<@NotNull FeatherMod>> getBlockedMods() {
-    return CompletableFuture.completedFuture(Collections.unmodifiableCollection(this.blockedMods));
+    return CompletableFuture.completedFuture(
+        Collections.unmodifiableSet(new HashSet<>(this.blockedMods)));
   }
 
   @Override

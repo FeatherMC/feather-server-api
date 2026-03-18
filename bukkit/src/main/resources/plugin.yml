@@ -5,6 +5,7 @@ website: https://feathermc.com
 main: net.digitalingot.feather.serverapi.bukkit.FeatherBukkitPlugin
 load: STARTUP
 api-version: "1.13"
+folia-supported: true
 
 permissions:
   feather-server-api.notify:
